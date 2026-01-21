@@ -1,5 +1,5 @@
--- Carregar a biblioteca Rayfield
-local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
+--- Carregar a biblioteca Rayfield
+local Rayfield = loadstring(game:HttpGet("https://raw.githubusercontent.com/shlexware/Rayfield/main/source"))()
 
 -- Criar a janela principal
 local Window = Rayfield:CreateWindow({
@@ -14,7 +14,7 @@ local Window = Rayfield:CreateWindow({
 })
 
 -- Criar aba para Key System
-local Tab = Window:CreateTab("Key System", 4483362458) -- ícone opcional
+local Tab = Window:CreateTab("Key System", 4483362458)
 
 -- Caixa de texto para digitar a chave
 local KeyBox = Tab:CreateInput({
@@ -30,9 +30,8 @@ local KeyBox = Tab:CreateInput({
                 Image = 4483362458
             })
             
-            -- Aqui você coloca o seu script principal
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/mudinhosilva47-web/MeuScriptRoblox/main/meuscript.lua
-"))()
+            -- Script principal
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/mudinhosilva47-web/MeuScriptRoblox/main/meuscript.lua"))()
         else
             Rayfield:Notify({
                 Title = "Erro!",
