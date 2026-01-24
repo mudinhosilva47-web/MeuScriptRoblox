@@ -164,28 +164,32 @@ ajBtn.MouseButton1Click:Connect(function()
     end)
 end)
 
+-- Aba Gaze Emotes
+local gazeBtn = Instance.new("TextButton")
+gazeBtn.Size = UDim2.new(1, 0, 0, 40)
+gazeBtn.Position = UDim2.new(0, 0, 0, 120)
+gazeBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+gazeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+gazeBtn.Text = "Gaze Emotes"
+gazeBtn.Parent = menu
+
+gazeBtn.MouseButton1Click:Connect(function()
+    clearContent()
+    local runBtn = Instance.new("TextButton")
+    runBtn.Size = UDim2.new(1, -10, 0, 40)
+    runBtn.Position = UDim2.new(0, 5, 0, 5)
+    runBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+    runBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    runBtn.Text = "Executar Gaze Emotes"
+    runBtn.Parent = scroll
+
+    runBtn.MouseButton1Click:Connect(function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Gazer-Ha/Gaze-stuff/refs/heads/main/Gaze%20emote"))()
+    end)
+end)
+
 -- Sistema de arrastar pelo título
 local UserInputService = game:GetService("UserInputService")
 local dragging = false
 local dragStart, startPos
 
-title.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-        dragging = true
-        dragStart = input.Position
-        startPos = frame.Position
-    end
-end)
-
-UserInputService.InputChanged:Connect(function(input)
-    if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
-        local delta = input.Position - dragStart
-        frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-    end
-end)
-
-title.InputEnded:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-        dragging = false
-    end
-end)
