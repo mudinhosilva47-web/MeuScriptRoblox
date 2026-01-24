@@ -1,5 +1,5 @@
--- Carregar Rayfield
-local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+-- Carregar Rayfield (link oficial)
+local Rayfield = loadstring(game:HttpGet("https://raw.githubusercontent.com/shlexware/Rayfield/main/source"))()
 
 -- Criar Janela
 local Window = Rayfield:CreateWindow({
@@ -7,9 +7,7 @@ local Window = Rayfield:CreateWindow({
    LoadingTitle = "Rayfield Music IDs",
    LoadingSubtitle = "Feito por você",
    ConfigurationSaving = {
-      Enabled = true,
-      FolderName = nil,
-      FileName = "MusicIDs"
+      Enabled = false -- desativado para evitar erro
    }
 })
 
@@ -17,7 +15,7 @@ local Window = Rayfield:CreateWindow({
 local Tab = Window:CreateTab("Músicas", 4483362458)
 
 -- Criar Seção
-local Section = Tab:CreateSection("IDs de Música")
+Tab:CreateSection("IDs de Música")
 
 -- Função para copiar ID
 local function copiarID(id)
@@ -29,7 +27,7 @@ local function copiarID(id)
     })
 end
 
--- Lista de IDs
+-- Lista de IDs (somente números)
 local ids = {
     "135738534706063",
     "88667071098147",
