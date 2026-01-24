@@ -3,13 +3,28 @@ local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
 local Window = Rayfield:CreateWindow({
    Name = "Brookhaven Multi-Tool",
    LoadingTitle = "Rayfield UI",
-   LoadingSubtitle = "Funk & RGB & Roupas & Boombox",
+   LoadingSubtitle = "Funk, RGB, Roupas & Boombox",
    ConfigurationSaving = {
       Enabled = true,
       FolderName = nil,
       FileName = "BrookhavenMultiTool"
    }
 })
+
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+
+-- Remote do Boombox
+local boomboxRemote = ReplicatedStorage:FindFirstChild("ClientMusic")
+
+local function playBoombox(id)
+    if boomboxRemote then
+        boomboxRemote:FireServer(id)
+    else
+        warn("Remote ClientMusic não encontrado!")
+    end
+end
 
 -------------------------------------------------
 -- 1. Aba Music
@@ -20,9 +35,8 @@ local MusicTab = Window:CreateTab("Music", 4483362458)
 MusicTab:CreateButton({
    Name = "Stop",
    Callback = function()
-      local tool = game:GetService("Players").LocalPlayer.Character:FindFirstChildWhichIsA("Tool")
-      if tool and tool:FindFirstChild("Handle") and tool.Handle:FindFirstChild("Sound") then
-         tool.Handle.Sound:Stop()
+      if boomboxRemote then
+         boomboxRemote:FireServer("") -- envia vazio para parar
       end
    end
 })
@@ -51,11 +65,7 @@ for _,id in ipairs(ids) do
    MusicTab:CreateButton({
       Name = id,
       Callback = function()
-         local tool = game:GetService("Players").LocalPlayer.Character:FindFirstChildWhichIsA("Tool")
-         if tool and tool:FindFirstChild("Handle") and tool.Handle:FindFirstChild("Sound") then
-            tool.Handle.Sound.SoundId = "rbxassetid://"..id
-            tool.Handle.Sound:Play()
-         end
+         playBoombox(id)
       end
    })
 end
@@ -70,7 +80,6 @@ local function rainbowBoombox(tool)
         while true do
             for i = 0, 1, 0.01 do
                 local color = Color3.fromHSV(i, 1, 1)
-
                 if tool:FindFirstChild("Handle") then
                     local handle = tool.Handle
                     if handle:IsA("BasePart") then
@@ -95,7 +104,7 @@ end
 RGBTab:CreateButton({
    Name = "Rainbow Boombox",
    Callback = function()
-      local tool = game:GetService("Players").LocalPlayer.Character:FindFirstChildWhichIsA("Tool")
+      local tool = player.Character:FindFirstChildWhichIsA("Tool")
       if tool then
          rainbowBoombox(tool)
       end
@@ -108,7 +117,7 @@ RGBTab:CreateButton({
 local ClothesTab = Window:CreateTab("Roupas", 4483362458)
 
 local function copyOutfit(targetPlayer)
-    local myChar = game.Players.LocalPlayer.Character
+    local myChar = player.Character
     local targetChar = targetPlayer.Character
     if not (myChar and targetChar) then return end
 
@@ -152,7 +161,7 @@ local function copyOutfit(targetPlayer)
         newColors.RightLegColor = bodyColors.RightLegColor
     end
 
-    -- Copiar acessórios
+    -- Copiar acessórios (um por um)
     for _,acc in ipairs(targetChar:GetChildren()) do
         if acc:IsA("Accessory") then
             local newAcc = acc:Clone()
@@ -161,79 +170,13 @@ local function copyOutfit(targetPlayer)
     end
 end
 
-for _,player in ipairs(game.Players:GetPlayers()) do
-    if player ~= game.Players.LocalPlayer then
+-- Criar lista de jogadores com botões
+for _,p in ipairs(game.Players:GetPlayers()) do
+    if p ~= player then
         ClothesTab:CreateButton({
-            Name = "Copiar roupas de "..player.Name,
+            Name = "Copiar roupas de "..p.Name,
             Callback = function()
-                copyOutfit(player)
-            end
-        })
-    end
-end
-
--------------------------------------------------
--- 4. Aba Boombox
--------------------------------------------------
-local BoomboxTab = Window:CreateTab("Boombox", 4483362458)
-
-local function hasBoombox(player)
-    if player.Character then
-        local tool = player.Character:FindFirstChildWhichIsA("Tool")
-        if tool and tool:FindFirstChild("Handle") and tool.Handle:FindFirstChild("Sound") then
-            return true
-        end
-    end
-    return false
-end
-
-local function copyBoombox(player)
-    local myChar = game.Players.LocalPlayer.Character
-    local myTool = myChar and myChar:FindFirstChildWhichIsA("Tool")
-    local targetTool = player.Character and player.Character:FindFirstChildWhichIsA("Tool")
-
-    if myTool and myTool:FindFirstChild("Handle") and myTool.Handle:FindFirstChild("Sound") then
-        if targetTool and targetTool:FindFirstChild("Handle") and targetTool.Handle:FindFirstChild("Sound") then
-            local id = targetTool.Handle.Sound.SoundId
-            myTool.Handle.Sound.SoundId = id
-            myTool.Handle.Sound:Play()
-        end
-    end
-end
-
-for _,player in ipairs(game.Players:GetPlayers()) do
-    if player ~= game.Players.LocalPlayer and hasBoombox(player) then
-        BoomboxTab:CreateButton({
-            Name = "Copiar Boombox de "..player.Name,
-            Callback = function()
-                copyBoombox(player)
-            end
-        })
-    end
-end
-
--------------------------------------------------
--- 5. Aba Music ID
--------------------------------------------------
-local MusicIDTab = Window:CreateTab("Music ID", 4483362458)
-
-local idLabel = MusicIDTab:CreateLabel("ID da música: Nenhum selecionado")
-
-local function getBoomboxID(player)
-    local tool = player.Character and player.Character:FindFirstChildWhichIsA("Tool")
-    if tool and tool:FindFirstChild("Handle") and tool.Handle:FindFirstChild("Sound") then
-        return tool.Handle.Sound.SoundId
-    end
-    return "Nenhum ID encontrado"
-end
-
-for _,player in ipairs(game.Players:GetPlayers()) do
-    if player ~= game.Players.LocalPlayer and hasBoombox(player) then
-        MusicIDTab:CreateButton({
-            Name = "Ver ID do Boombox de "..player.Name,
-            Callback = function()
-                local id = getBoomboxID(player)
-                idLabel:Set("ID da música: "..id)
+                copyOutfit(p)
             end
         })
     end
