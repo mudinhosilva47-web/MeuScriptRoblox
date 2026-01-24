@@ -18,10 +18,10 @@ title.TextColor3 = Color3.fromRGB(255, 255, 255)
 title.Text = "Meus IDs"
 title.Parent = frame
 
--- Botão Fechar
+-- Botão Fechar (lado esquerdo)
 local closeBtn = Instance.new("TextButton")
 closeBtn.Size = UDim2.new(0, 30, 0, 30)
-closeBtn.Position = UDim2.new(1, -30, 0, 0)
+closeBtn.Position = UDim2.new(0, 0, 0, 0) -- canto superior esquerdo
 closeBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
 closeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 closeBtn.Text = "X"
