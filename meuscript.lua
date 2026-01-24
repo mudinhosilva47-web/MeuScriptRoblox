@@ -42,10 +42,10 @@ local ids = {
 -- Criar botões para cada ID
 for _,id in ipairs(ids) do
    IDsTab:CreateButton({
-      Name = "Mostrar ID "..id,
+      Name = "Copiar ID "..id,
       Callback = function()
          idLabel:Set("ID selecionado: "..id)
-         -- Agora você pode copiar o texto do label
+         setclipboard(id) -- agora o ID vai direto para o clipboard
       end
    })
 end
