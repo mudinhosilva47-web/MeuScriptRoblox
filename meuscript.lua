@@ -3,7 +3,7 @@ local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
 local Window = Rayfield:CreateWindow({
    Name = "Brookhaven Multi-Tool",
    LoadingTitle = "Rayfield UI",
-   LoadingSubtitle = "Copiar IDs",
+   LoadingSubtitle = "IDs para copiar manualmente",
    ConfigurationSaving = {
       Enabled = true,
       FolderName = nil,
@@ -42,10 +42,10 @@ local ids = {
 -- Criar botões para cada ID
 for _,id in ipairs(ids) do
    IDsTab:CreateButton({
-      Name = "Copiar ID "..id,
+      Name = "Mostrar ID "..id,
       Callback = function()
          idLabel:Set("ID selecionado: "..id)
-         setclipboard(id) -- agora o ID vai direto para o clipboard
+         -- No mobile você copia manualmente tocando e segurando no texto do label
       end
    })
 end
