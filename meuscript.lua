@@ -4,30 +4,32 @@ gui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 
 -- Frame principal
 local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 300, 0, 350)
-frame.Position = UDim2.new(0.3, 0, 0.3, 0)
-frame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+frame.Size = UDim2.new(0, 320, 0, 360)
+frame.Position = UDim2.new(0.35, 0, 0.3, 0)
+frame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 frame.BorderSizePixel = 0
 frame.Active = true
 frame.Parent = gui
 
 -- Título (arrastável)
 local title = Instance.new("TextLabel")
-title.Size = UDim2.new(1, 0, 0, 40)
-title.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+title.Size = UDim2.new(1, -40, 0, 40)
+title.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 title.TextColor3 = Color3.fromRGB(255, 255, 255)
-title.Text = "⚙️ Script Hub"
+title.Text = "🎛️ Script Hub"
 title.Font = Enum.Font.SourceSansBold
 title.TextSize = 20
 title.Parent = frame
 
--- Botão fechar
+-- Botão fechar (igual estilo Gaze)
 local closeBtn = Instance.new("TextButton")
 closeBtn.Size = UDim2.new(0, 40, 0, 40)
-closeBtn.Position = UDim2.new(0, 0, 0, 0)
+closeBtn.Position = UDim2.new(1, -40, 0, 0)
 closeBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
 closeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 closeBtn.Text = "X"
+closeBtn.Font = Enum.Font.SourceSansBold
+closeBtn.TextSize = 20
 closeBtn.Parent = frame
 closeBtn.MouseButton1Click:Connect(function()
     frame.Visible = false
@@ -35,15 +37,15 @@ end)
 
 -- Menu lateral
 local menu = Instance.new("Frame")
-menu.Size = UDim2.new(0, 80, 1, -40)
+menu.Size = UDim2.new(0, 90, 1, -40)
 menu.Position = UDim2.new(0, 0, 0, 40)
 menu.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
 menu.Parent = frame
 
 -- Área principal
 local content = Instance.new("Frame")
-content.Size = UDim2.new(1, -80, 1, -40)
-content.Position = UDim2.new(0, 80, 0, 40)
+content.Size = UDim2.new(1, -90, 1, -40)
+content.Position = UDim2.new(0, 90, 0, 40)
 content.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
 content.Parent = frame
 
@@ -65,13 +67,15 @@ local function clearContent()
     end
 end
 
+-------------------------------------------------
 -- Aba Músicas
+-------------------------------------------------
 local musicBtn = Instance.new("TextButton")
 musicBtn.Size = UDim2.new(1, 0, 0, 40)
 musicBtn.Position = UDim2.new(0, 0, 0, 0)
 musicBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
 musicBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-musicBtn.Text = "Músicas"
+musicBtn.Text = "🎵 Músicas"
 musicBtn.Parent = menu
 
 local ids = {
@@ -116,13 +120,15 @@ musicBtn.MouseButton1Click:Connect(function()
     scroll.CanvasSize = UDim2.new(0, 0, 0, y)
 end)
 
+-------------------------------------------------
 -- Aba Infinity Yield
+-------------------------------------------------
 local iyBtn = Instance.new("TextButton")
 iyBtn.Size = UDim2.new(1, 0, 0, 40)
 iyBtn.Position = UDim2.new(0, 0, 0, 40)
 iyBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
 iyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-iyBtn.Text = "Infinity Yield"
+iyBtn.Text = "⚡ Infinity Yield"
 iyBtn.Parent = menu
 
 iyBtn.MouseButton1Click:Connect(function()
@@ -140,13 +146,15 @@ iyBtn.MouseButton1Click:Connect(function()
     end)
 end)
 
+-------------------------------------------------
 -- Aba AJ Music Hub
+-------------------------------------------------
 local ajBtn = Instance.new("TextButton")
 ajBtn.Size = UDim2.new(1, 0, 0, 40)
 ajBtn.Position = UDim2.new(0, 0, 0, 80)
 ajBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
 ajBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-ajBtn.Text = "AJ Music Hub"
+ajBtn.Text = "🎶 AJ Music Hub"
 ajBtn.Parent = menu
 
 ajBtn.MouseButton1Click:Connect(function()
@@ -164,13 +172,15 @@ ajBtn.MouseButton1Click:Connect(function()
     end)
 end)
 
+-------------------------------------------------
 -- Aba Gaze Emotes
+-------------------------------------------------
 local gazeBtn = Instance.new("TextButton")
 gazeBtn.Size = UDim2.new(1, 0, 0, 40)
 gazeBtn.Position = UDim2.new(0, 0, 0, 120)
 gazeBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
 gazeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-gazeBtn.Text = "Gaze Emotes"
+gazeBtn.Text = "💃 Gaze Emotes"
 gazeBtn.Parent = menu
 
 gazeBtn.MouseButton1Click:Connect(function()
@@ -181,9 +191,7 @@ gazeBtn.MouseButton1Click:Connect(function()
     runBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
     runBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
     runBtn.Text = "Executar Gaze Emotes"
-    runBtn.Parent = scroll
-
-    runBtn.MouseButton1Click:Connect(function()
+    runBtn.ParentrunBtn.MouseButton1Click:Connect(function()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/Gazer-Ha/Gaze-stuff/refs/heads/main/Gaze%20emote"))()
     end)
 end)
@@ -193,3 +201,28 @@ local UserInputService = game:GetService("UserInputService")
 local dragging = false
 local dragStart, startPos
 
+title.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        dragging = true
+        dragStart = input.Position
+        startPos = frame.Position
+    end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+    if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+        local delta = input.Position - dragStart
+        frame.Position = UDim2.new(
+            startPos.X.Scale,
+            startPos.X.Offset + delta.X,
+            startPos.Y.Scale,
+            startPos.Y.Offset + delta.Y
+        )
+    end
+end)
+
+title.InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        dragging = false
+    end
+end)
