@@ -1,224 +1,131 @@
--- Copilot Menu Hub Brookhaven Edition
--- by Mudinho
-
+-- Hub Brookhaven Mudinho Edition
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local TweenService = game:GetService("TweenService")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local InsertService = game:GetService("InsertService")
 
 -- GUI principal
 local ScreenGui = Instance.new("ScreenGui", LocalPlayer:WaitForChild("PlayerGui"))
 ScreenGui.Name = "MudinhoHub"
 ScreenGui.ResetOnSpawn = false
 
--- Botão externo para abrir
-local OpenBtn = Instance.new("TextButton", ScreenGui)
-OpenBtn.Size = UDim2.new(0,40,0,40)
-OpenBtn.Position = UDim2.new(0,10,0.5,-20)
-OpenBtn.Text = "≡"
-OpenBtn.BackgroundColor3 = Color3.fromRGB(0,120,255)
-OpenBtn.TextColor3 = Color3.new(1,1,1)
-OpenBtn.Font = Enum.Font.GothamBold
-OpenBtn.TextSize = 20
-OpenBtn.Visible = false
-Instance.new("UICorner",OpenBtn).CornerRadius = UDim.new(0,6)
-
--- Frame principal
+-- Frame principal menor
 local MainFrame = Instance.new("Frame", ScreenGui)
-MainFrame.Size = UDim2.new(0,600,0,400)
-MainFrame.Position = UDim2.new(0.5,-300,0.5,-200)
-MainFrame.BackgroundColor3 = Color3.fromRGB(20,20,40)
-Instance.new("UICorner",MainFrame).CornerRadius = UDim.new(0,8)
+MainFrame.Size = UDim2.new(0, 500, 0, 300)
+MainFrame.Position = UDim2.new(0.5, -250, 0.5, -150)
+MainFrame.BackgroundColor3 = Color3.fromRGB(0, 50, 100)
+MainFrame.BackgroundTransparency = 0.3
+MainFrame.BorderSizePixel = 4
+MainFrame.BorderColor3 = Color3.fromRGB(0, 120, 255)
+Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 8)
 
--- Dragify suave
-local dragging, dragInput, dragStart, startPos
-MainFrame.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.Touch then
-        dragging = true
-        dragStart = input.Position
-        startPos = MainFrame.Position
-        input.Changed:Connect(function()
-            if input.UserInputState == Enum.UserInputState.End then dragging = false end
-        end)
-    end
-end)
-MainFrame.InputChanged:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-        dragInput = input
-    end
-end)
-game:GetService("UserInputService").InputChanged:Connect(function(input)
-    if input == dragInput and dragging then
-        local delta = input.Position - dragStart
-        local goal = UDim2.new(startPos.X.Scale,startPos.X.Offset+delta.X,startPos.Y.Scale,startPos.Y.Offset+delta.Y)
-        TweenService:Create(MainFrame,TweenInfo.new(0.1),{Position=goal}):Play()
-    end
-end)
-
--- Botão fechar
-local CloseBtn = Instance.new("TextButton", MainFrame)
-CloseBtn.Size = UDim2.new(0,30,0,30)
-CloseBtn.Position = UDim2.new(1,-35,0,5)
-CloseBtn.Text = "X"
-CloseBtn.BackgroundColor3 = Color3.fromRGB(255,0,0)
-CloseBtn.TextColor3 = Color3.new(1,1,1)
-CloseBtn.Font = Enum.Font.GothamBold
-CloseBtn.TextSize = 16
-Instance.new("UICorner",CloseBtn).CornerRadius = UDim.new(0,6)
-CloseBtn.MouseButton1Click:Connect(function()
-    MainFrame.Visible = false
-    OpenBtn.Visible = true
-end)
-OpenBtn.MouseButton1Click:Connect(function()
-    MainFrame.Visible = true
-    OpenBtn.Visible = false
-end)
+-- Dragify + Resize
+MainFrame.Active = true
+MainFrame.Draggable = true
+MainFrame.ClipsDescendants = false
+MainFrame.AutomaticSize = Enum.AutomaticSize.None
 
 -- Sidebar categorias
 local Sidebar = Instance.new("Frame", MainFrame)
-Sidebar.Size = UDim2.new(0,150,1,0)
-Sidebar.BackgroundColor3 = Color3.fromRGB(30,30,60)
+Sidebar.Size = UDim2.new(0, 150, 1, 0)
+Sidebar.BackgroundColor3 = Color3.fromRGB(0,0,0)
+Sidebar.BackgroundTransparency = 0.5
 
-local categories = {"Logger","Decoder","Anti-Logger","Scripts","Visualizer","Avatar Copier"}
+local categories = {"Jogadores","IDs Musicas","Brookhaven Hubs"}
 local TabFrames = {}
 local SelectedCategory = nil
+
+-- Animação Blue/Black nos nomes
+local function animateText(label)
+    local on = true
+    while label.Parent do
+        TweenService:Create(label,TweenInfo.new(1,Enum.EasingStyle.Linear,Enum.EasingDirection.InOut),
+            {TextColor3 = on and Color3.fromRGB(0,120,255) or Color3.fromRGB(0,0,0)}):Play()
+        on = not on
+        wait(1)
+    end
+end
 
 for i,name in ipairs(categories) do
     local btn = Instance.new("TextButton", Sidebar)
     btn.Size = UDim2.new(1,-10,0,30)
     btn.Position = UDim2.new(0,5,0,40+(i-1)*35)
     btn.Text = name
-    btn.TextColor3 = Color3.fromRGB(200,200,255)
-    btn.BackgroundColor3 = Color3.fromRGB(40,40,80)
-    btn.Font = Enum.Font.Gotham
+    btn.BackgroundTransparency = 1
+    btn.Font = Enum.Font.GothamBold
     btn.TextSize = 16
-    
+    btn.TextColor3 = Color3.fromRGB(0,120,255)
+    spawn(function() animateText(btn) end)
+
     local TabFrame = Instance.new("Frame", MainFrame)
     TabFrame.Size = UDim2.new(1,-150,1,0)
     TabFrame.Position = UDim2.new(0,150,0,0)
-    TabFrame.BackgroundColor3 = Color3.fromRGB(25,25,50)
+    TabFrame.BackgroundColor3 = Color3.fromRGB(20,20,40)
+    TabFrame.BackgroundTransparency = 0.4
     TabFrame.Visible = false
     TabFrames[name] = TabFrame
-    
+
     btn.MouseButton1Click:Connect(function()
         if SelectedCategory then TabFrames[SelectedCategory].Visible = false end
         SelectedCategory = name
         TabFrame.Visible = true
-        for _,b in pairs(Sidebar:GetChildren()) do
-            if b:IsA("TextButton") then b.BackgroundColor3 = Color3.fromRGB(40,40,80) end
-        end
-        btn.BackgroundColor3 = Color3.fromRGB(0,120,255)
     end)
 end
 
--- Inicializar Logger
-local LoggerFrame = TabFrames["Logger"]
-local LoggerLabel = Instance.new("TextLabel",LoggerFrame)
-LoggerLabel.Size = UDim2.new(1,0,0,30)
-LoggerLabel.Text = "Logger Functions"
-LoggerLabel.TextColor3 = Color3.new(1,1,1)
-LoggerLabel.BackgroundTransparency = 1
+-- Categoria 1: Lista de Jogadores
+local PlayerList = Instance.new("ScrollingFrame", TabFrames["Jogadores"])
+PlayerList.Size = UDim2.new(1,-20,1,-20)
+PlayerList.Position = UDim2.new(0,10,0,10)
+PlayerList.CanvasSize = UDim2.new(0,0,0,0)
+local UIList = Instance.new("UIListLayout", PlayerList)
+UIList.Padding = UDim.new(0,5)
 
--- Avatar Copier (HumanoidDescription + Gazer)
-local AvatarFrame = TabFrames["Avatar Copier"]
-
-local EnterName = Instance.new("TextBox", AvatarFrame)
-EnterName.Size = UDim2.new(0.8,0,0,30)
-EnterName.Position = UDim2.new(0.1,0,0.2,0)
-EnterName.PlaceholderText = "Digite nome/displayname"
-EnterName.TextColor3 = Color3.new(1,1,1)
-EnterName.BackgroundColor3 = Color3.fromRGB(30,30,60)
-Instance.new("UICorner",EnterName).CornerRadius = UDim.new(0,6)
-
-local CopyBtn = Instance.new("TextButton", AvatarFrame)
-CopyBtn.Size = UDim2.new(0.5,0,0,30)
-CopyBtn.Position = UDim2.new(0.25,0,0.5,0)
-CopyBtn.Text = "COPY!"
-CopyBtn.BackgroundColor3 = Color3.fromRGB(0,120,255)
-CopyBtn.TextColor3 = Color3.new(1,1,1)
-CopyBtn.Font = Enum.Font.GothamBold
-CopyBtn.TextSize = 16
-Instance.new("UICorner",CopyBtn).CornerRadius = UDim.new(0,6)
-
--- Funções Avatar Copier
-local function applySkinVisual(username)
-    local success,userId = pcall(function() return Players:GetUserIdFromNameAsync(username) end)
-    if not success then return end
-    local successDesc,desc = pcall(function() return Players:GetHumanoidDescriptionFromUserId(userId) end)
-    if not successDesc then return end
-    local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-    local humanoid = character:FindFirstChildOfClass("Humanoid")
-    if humanoid then
-        humanoid:RemoveAccessories()
-        for _,obj in pairs(character:GetChildren()) do
-            if obj:IsA("Shirt") or obj:IsA("Pants") then obj:Destroy() end
-        end
-        local shirt = Instance.new("Shirt")
-        shirt.ShirtTemplate = "rbxassetid://"..desc.Shirt
-        shirt.Parent = character
-        local pants = Instance.new("Pants")
-        pants.PantsTemplate = "rbxassetid://"..desc.Pants
-        pants.Parent = character
+local function updatePlayers()
+    PlayerList:ClearAllChildren()
+    for _,plr in ipairs(Players:GetPlayers()) do
+        local btn = Instance.new("TextButton", PlayerList)
+        btn.Size = UDim2.new(1,0,0,30)
+        btn.Text = "Teleportar: "..plr.Name
+        btn.BackgroundColor3 = Color3.fromRGB(0,80,160)
+        btn.TextColor3 = Color3.new(1,1,1)
+        btn.MouseButton1Click:Connect(function()
+            LocalPlayer.Character.HumanoidRootPart.CFrame = plr.Character.HumanoidRootPart.CFrame + Vector3.new(2,0,2)
+        end)
     end
+    PlayerList.CanvasSize = UDim2.new(0,0,0,#Players:GetPlayers()*35)
+end
+Players.PlayerAdded:Connect(updatePlayers)
+Players.PlayerRemoving:Connect(updatePlayers)
+updatePlayers()
+
+-- Categoria 2: IDs Musicas
+local MusicFrame = TabFrames["IDs Musicas"]
+local ids = {"1234567890","9876543210","1122334455"}
+for i,id in ipairs(ids) do
+    local btn = Instance.new("TextButton", MusicFrame)
+    btn.Size = UDim2.new(0,200,0,30)
+    btn.Position = UDim2.new(0,20,0,40*i)
+    btn.Text = id
+    btn.BackgroundColor3 = Color3.fromRGB(0,80,160)
+    btn.TextColor3 = Color3.new(1,1,1)
+    btn.MouseButton1Click:Connect(function()
+        setclipboard(id)
+    end)
 end
 
--- Gazer Remote Copy
-local function START(displayName)
-    local player=nil
-    displayName=string.lower(displayName)
-    for _,plr in ipairs(Players:GetPlayers()) do
-        if string.find(string.lower(plr.Name),displayName) or string.find(string.lower(plr.DisplayName),displayName) then
-            player=plr break
-        end
-    end
-    if player then
-        -- Exemplo simplificado: copiar roupas e acessórios via Remote
-        ReplicatedStorage.RE["1Updat1eAvata1r"]:FireServer("wear",player.Character:FindFirstChildOfClass("Humanoid"):GetAppliedDescription().Shirt)
-        ReplicatedStorage.RE["1Updat1eAvata1r"]:FireServer("wear",player.Character:FindFirstChildOfClass("Humanoid"):GetAppliedDescription().Pants)
-                -- Copiar roupas (já começado)
-        local desc = player.Character:FindFirstChildOfClass("Humanoid"):GetAppliedDescription()
-        if desc.GraphicTShirt and desc.GraphicTShirt ~= 0 then
-            ReplicatedStorage.RE["1Updat1eAvata1r"]:FireServer("wear", desc.GraphicTShirt)
-        end
-
-        -- Resetar blocky antes de aplicar partes do corpo
-        local bodyParts = {
-            desc.Torso,
-            desc.RightArm,
-            desc.LeftArm,
-            desc.RightLeg,
-            desc.LeftLeg,
-            desc.Head
-        }
-        ReplicatedStorage.RE["1Avata1rOrigina1l"]:FireServer("CharacterChange", bodyParts, "GAZE")
-
-        -- Copiar acessórios
-        local accessories = {
-            desc.HatAccessory,
-            desc.HairAccessory,
-            desc.FaceAccessory,
-            desc.NeckAccessory,
-            desc.ShouldersAccessory,
-            desc.FrontAccessory,
-            desc.BackAccessory,
-            desc.WaistAccessory
-        }
-        for _, accList in ipairs(accessories) do
-            for id in string.gmatch(accList or "", "%d+") do
-                ReplicatedStorage.RE["1Updat1eAvata1r"]:FireServer("wear", tonumber(id))
-            end
-        end
-
-        -- Copiar tom de pele
-        local bodyColors = player.Character:FindFirstChildOfClass("BodyColors")
-        if bodyColors then
-            local skinToneName = bodyColors.HeadColor.Name
-            ReplicatedStorage.RE["1Updat1eAvata1r"]:FireServer("skintone", skinToneName)
-        end
-
-        print("Avatar copiado de "..player.Name)
-    else
-        warn("Jogador não encontrado para copiar avatar.")
-    end
+-- Categoria 3: Brookhaven Hubs
+local HubFrame = TabFrames["Brookhaven Hubs"]
+local hubs = {
+    {name="89 Hub",url="https://raw.githubusercontent.com/..."},
+    {name="Coquette Hub",url="https://raw.githubusercontent.com/..."}
+}
+for i,h in ipairs(hubs) do
+    local btn = Instance.new("TextButton", HubFrame)
+    btn.Size = UDim2.new(0,200,0,30)
+    btn.Position = UDim2.new(0,20,0,40*i)
+    btn.Text = h.name
+    btn.BackgroundColor3 = Color3.fromRGB(0,80,160)
+    btn.TextColor3 = Color3.new(1,1,1)
+    btn.MouseButton1Click:Connect(function()
+        loadstring(game:HttpGet(h.url))()
+    end)
 end
