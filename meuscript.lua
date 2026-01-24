@@ -2,9 +2,9 @@ local gui = Instance.new("ScreenGui")
 gui.Name = "IDsHub"
 gui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 
--- Frame principal menor
+-- Frame principal
 local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 200, 0, 250) -- reduzido para caber bem na tela
+frame.Size = UDim2.new(0, 200, 0, 250)
 frame.Position = UDim2.new(0.7, 0, 0.3, 0)
 frame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 frame.Active = true
@@ -93,29 +93,28 @@ end
 
 scroll.CanvasSize = UDim2.new(0, 0, 0, y)
 
--- Sistema de arrastar (somente título e label)
+-- Sistema de arrastar pelo título
+local UserInputService = game:GetService("UserInputService")
 local dragging = false
 local dragStart, startPos
-local UserInputService = game:GetService("UserInputService")
 
 title.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
         dragging = true
-        dragStart = UserInputService:GetMouseLocation()
+        dragStart = input.Position
         startPos = frame.Position
     end
 end)
 
 title.InputChanged:Connect(function(input)
-    if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
-        local mousePos = UserInputService:GetMouseLocation()
-        local delta = mousePos - dragStart
+    if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+        local delta = input.Position - dragStart
         frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
     end
 end)
 
 title.InputEnded:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
         dragging = false
     end
 end)
