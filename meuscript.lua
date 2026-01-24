@@ -12,7 +12,7 @@ local Window = Rayfield:CreateWindow({
 })
 
 -------------------------------------------------
--- Aba IDs
+-- Aba Meus IDs
 -------------------------------------------------
 local IDsTab = Window:CreateTab("Meus IDs", 4483362458)
 
@@ -42,10 +42,10 @@ local ids = {
 -- Criar botões para cada ID
 for _,id in ipairs(ids) do
    IDsTab:CreateButton({
-      Name = "Copiar ID "..id,
+      Name = "Mostrar ID "..id,
       Callback = function()
          idLabel:Set("ID selecionado: "..id)
-         -- Aqui você pode copiar manualmente o texto que aparece no label
+         -- Agora você pode copiar o texto do label
       end
    })
 end
