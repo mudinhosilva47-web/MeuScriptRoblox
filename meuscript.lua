@@ -24,98 +24,115 @@ frame.Position = UDim2.new(0.5, -150, 0.5, -180)
 frame.BackgroundColor3 = Color3.fromRGB(25,0,0)
 frame.BorderSizePixel = 0
 frame.Active = true
+frame.Selectable = true
 Instance.new("UICorner", frame).CornerRadius = UDim.new(0,8)
 
 --====================================
 -- TITLE BAR
 --====================================
 local title = Instance.new("TextLabel", frame)
-title.Size = UDim2.new(1, -40, 0, 30)
-title.Position = UDim2.new(0, 8, 0, 0)
+title.Size = UDim2.new(1, -10, 0, 30)
+title.Position = UDim2.new(0, 5, 0, 0)
 title.Text = "🎧 Music ID Hub"
 title.Font = Enum.Font.SourceSansBold
 title.TextSize = 16
 title.TextColor3 = Color3.fromRGB(255,80,80)
 title.BackgroundTransparency = 1
-title.TextXAlignment = Left
+title.TextXAlignment = Enum.TextXAlignment.Left
 
-local close = Instance.new("TextButton", frame)
-close.Size = UDim2.new(0, 25, 0, 25)
-close.Position = UDim2.new(1, -30, 0, 3)
-close.Text = "X"
-close.BackgroundColor3 = Color3.fromRGB(180,40,40)
-close.TextColor3 = Color3.new(1,1,1)
-Instance.new("UICorner", close)
+--====================================
+-- TABS
+--====================================
+local tabs = Instance.new("Frame", frame)
+tabs.Size = UDim2.new(1, 0, 0, 30)
+tabs.Position = UDim2.new(0, 0, 0, 32)
+tabs.BackgroundTransparency = 1
 
-close.MouseButton1Click:Connect(function()
-	gui:Destroy()
+local function createTabButton(text, xPos)
+	local btn = Instance.new("TextButton", tabs)
+	btn.Size = UDim2.new(0.5, -5, 1, 0)
+	btn.Position = UDim2.new(xPos, 5, 0, 0)
+	btn.Text = text
+	btn.BackgroundColor3 = Color3.fromRGB(90,20,20)
+	btn.TextColor3 = Color3.new(1,1,1)
+	btn.Font = Enum.Font.SourceSansBold
+	btn.TextSize = 14
+	Instance.new("UICorner", btn)
+	return btn
+end
+
+local musicTabBtn = createTabButton("🎵 Music IDs", 0)
+local utilTabBtn  = createTabButton("🛠 Util", 0.5)
+
+--====================================
+-- CONTENT FRAMES
+--====================================
+local function createContent()
+	local sf = Instance.new("ScrollingFrame", frame)
+	sf.Size = UDim2.new(1, -10, 1, -75)
+	sf.Position = UDim2.new(0, 5, 0, 65)
+	sf.ScrollBarThickness = 4
+	sf.BackgroundColor3 = Color3.fromRGB(40,0,0)
+	sf.AutomaticCanvasSize = Enum.AutomaticSize.Y
+	sf.CanvasSize = UDim2.new(0,0,0,0)
+	sf.Visible = false
+	Instance.new("UICorner", sf)
+	
+	local layout = Instance.new("UIListLayout", sf)
+	layout.Padding = UDim.new(0,6)
+	layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+	
+	return sf
+end
+
+local musicContent = createContent()
+local utilContent  = createContent()
+musicContent.Visible = true
+
+--====================================
+-- TAB SWITCH
+--====================================
+musicTabBtn.MouseButton1Click:Connect(function()
+	musicContent.Visible = true
+	utilContent.Visible = false
+end)
+
+utilTabBtn.MouseButton1Click:Connect(function()
+	musicContent.Visible = false
+	utilContent.Visible = true
 end)
 
 --====================================
--- CONTENT
+-- BUTTON CREATOR
 --====================================
-local content = Instance.new("ScrollingFrame", frame)
-content.Size = UDim2.new(1, -10, 1, -40)
-content.Position = UDim2.new(0, 5, 0, 35)
-content.CanvasSize = UDim2.new(0,0,0,0)
-content.ScrollBarThickness = 4
-content.BackgroundColor3 = Color3.fromRGB(40,0,0)
-Instance.new("UICorner", content).CornerRadius = UDim.new(0,6)
+local function addButton(parent, text, callback)
+	local btn = Instance.new("TextButton", parent)
+	btn.Size = UDim2.new(1, -10, 0, 32)
+	btn.Text = text
+	btn.BackgroundColor3 = Color3.fromRGB(90,20,20)
+	btn.TextColor3 = Color3.new(1,1,1)
+	btn.Font = Enum.Font.SourceSans
+	btn.TextSize = 14
+	Instance.new("UICorner", btn)
+
+	btn.MouseButton1Click:Connect(function()
+		callback(btn)
+	end)
+end
 
 --====================================
 -- MUSIC IDS
 --====================================
 local musicIds = {
-"135738534706063","88667071098147","140383430074415","112448027542021",
-"137879308393608","78414661292761","77712236704085","106866829236727",
-"109794531843693","79409780351863","113077324050977","128512104863934",
-"113778917971610","118064225618413","100584804963794","123171793186294",
-"70791355308103","131847084942844","136893418307185","128771129962214",
-"rbxassetid://101453332349961","rbxassetid://106160266114222"
+"135738534706063","88667071098147","140383430074415",
+"112448027542021","137879308393608",
+"rbxassetid://101453332349961"
 }
 
---====================================
--- STORAGE
---====================================
-local savedIds = {}
-local lastCopied = nil
-
---====================================
--- BUTTON CREATOR
---====================================
-local y = 5
-local function addButton(text, callback)
-	local btn = Instance.new("TextButton", content)
-	btn.Size = UDim2.new(1, -10, 0, 32)
-	btn.Position = UDim2.new(0, 5, 0, y)
-	btn.Text = text
-	btn.Font = Enum.Font.SourceSans
-	btn.TextSize = 14
-	btn.BackgroundColor3 = Color3.fromRGB(90,20,20)
-	btn.TextColor3 = Color3.new(1,1,1)
-	Instance.new("UICorner", btn).CornerRadius = UDim.new(0,4)
-
-	btn.MouseButton1Click:Connect(function()
-		callback(btn)
-	end)
-
-	y += 36
-	content.CanvasSize = UDim2.new(0,0,0,y)
-end
-
---====================================
--- MUSIC BUTTONS (COPIAR + SALVAR)
---====================================
 for i,id in ipairs(musicIds) do
-	addButton("📋 Copiar Music ID "..i, function(btn)
+	addButton(musicContent, "📋 Copiar Music ID "..i, function(btn)
 		local finalId = tostring(id):find("rbxassetid://") and id or "rbxassetid://"..id
-		
-		if setclipboard then
-			setclipboard(finalId)
-		end
-		
-		lastCopied = finalId
-		table.insert(savedIds, finalId)
+		if setclipboard then setclipboard(finalId) end
 
 		local old = btn.Text
 		btn.Text = "✅ Copiado!"
@@ -126,32 +143,18 @@ for i,id in ipairs(musicIds) do
 end
 
 --====================================
--- UTIL BUTTONS
+-- UTIL TAB
 --====================================
-addButton("📥 Colar último ID", function()
-	if lastCopied and setclipboard then
-		setclipboard(lastCopied)
-	end
-end)
-
-addButton("💾 Mostrar IDs salvos", function()
-	print("==== IDs SALVOS ====")
-	for i,v in ipairs(savedIds) do
-		print(i, v)
-	end
-end)
-
-addButton("🧹 Limpar IDs salvos", function()
-	table.clear(savedIds)
-	print("IDs salvos limpos")
+addButton(utilContent, "🧹 Limpar Clipboard", function()
+	if setclipboard then setclipboard("") end
 end)
 
 --====================================
--- DRAG (MOBILE + PC)
+-- DRAG (FUNCIONANDO)
 --====================================
 local dragging, dragStart, startPos
 
-title.InputBegan:Connect(function(input)
+frame.InputBegan:Connect(function(input)
 	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
 		dragging = true
 		dragStart = input.Position
@@ -159,7 +162,7 @@ title.InputBegan:Connect(function(input)
 	end
 end)
 
-title.InputEnded:Connect(function(input)
+frame.InputEnded:Connect(function(input)
 	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
 		dragging = false
 	end
@@ -177,4 +180,4 @@ UIS.InputChanged:Connect(function(input)
 	end
 end)
 
-print("✅ Music ID Hub carregado (copiar + salvar)")
+print("✅ Hub carregado sem bugs (abas + drag)")
