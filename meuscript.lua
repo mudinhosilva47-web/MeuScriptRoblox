@@ -5,26 +5,22 @@ gui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 
 -- Frame principal
 local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 420, 0, 460) -- maior
+frame.Size = UDim2.new(0, 420, 0, 460)
 frame.Position = UDim2.new(0.3, 0, 0.25, 0)
 frame.BackgroundColor3 = Color3.fromRGB(20, 40, 80)
-frame.BackgroundTransparency = 0.15 -- pouco transparente azul
+frame.BackgroundTransparency = 0.15
 frame.BorderSizePixel = 0
 frame.Active = true
 frame.Parent = gui
 
--- Cantos arredondados
 local UICorner = Instance.new("UICorner")
 UICorner.CornerRadius = UDim.new(0, 12)
 UICorner.Parent = frame
 
--- Stroke rainbow na borda
 local stroke = Instance.new("UIStroke")
 stroke.Thickness = 3
 stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 stroke.Parent = frame
-
--- Animação rainbow
 task.spawn(function()
     while true do
         for i = 0, 255 do
@@ -39,12 +35,11 @@ local title = Instance.new("TextLabel")
 title.Size = UDim2.new(1, -30, 0, 40)
 title.BackgroundColor3 = Color3.fromRGB(30, 60, 120)
 title.TextColor3 = Color3.fromRGB(255, 255, 255)
-title.Text = "🎛️ Hub Profissional"
+title.Text = "🎛️ Keyless Conqueror Hub"
 title.Font = Enum.Font.SourceSansBold
 title.TextSize = 22
 title.Parent = frame
 
--- Stroke rainbow no título
 local titleStroke = Instance.new("UIStroke")
 titleStroke.Thickness = 2
 titleStroke.Parent = title
@@ -57,7 +52,7 @@ task.spawn(function()
     end
 end)
 
--- Botão fechar menor
+-- Botão fechar
 local closeBtn = Instance.new("TextButton")
 closeBtn.Size = UDim2.new(0, 30, 0, 30)
 closeBtn.Position = UDim2.new(1, -35, 0, 5)
@@ -85,7 +80,6 @@ content.Position = UDim2.new(0, 120, 0, 40)
 content.BackgroundColor3 = Color3.fromRGB(45, 45, 70)
 content.Parent = frame
 
--- ScrollingFrame
 local scroll = Instance.new("ScrollingFrame")
 scroll.Size = UDim2.new(1, -10, 1, -10)
 scroll.Position = UDim2.new(0, 5, 0, 5)
@@ -94,7 +88,6 @@ scroll.ScrollBarThickness = 6
 scroll.BackgroundColor3 = Color3.fromRGB(50, 50, 80)
 scroll.Parent = content
 
--- Função limpar conteúdo
 local function clearContent()
     for _,child in pairs(scroll:GetChildren()) do
         if child:IsA("TextButton") or child:IsA("TextLabel") then
@@ -104,57 +97,110 @@ local function clearContent()
 end
 
 -------------------------------------------------
--- Lista de músicas (antigos + novos)
+-- Lista de músicas (seus IDs originais)
 -------------------------------------------------
-local ids = {
-    "135738534706063","88667071098147","140383430074415","112448027542021",
-    "137879308393608","78414661292761","77712236704085","106866829236727",
-    "109794531843693","79409780351863","113077324050977","128512104863934",
-    "113778917971610","118064225618413","100584804963794","123171793186294",
-    "70791355308103","131847084942844","136893418307185","128771129962214",
-    "135903820233276","137828639403630","90617634718635","84773737820526",
-    "1427189017","85056357341685","100755435179302","104026572705664",
-    "88667633095864","70535546082862","rbxassetid://101453332349961",
-    "rbxassetid://106160266114222"
+local musicList = {
+    {name="Music 1", id="135738534706063"},
+    {name="Music 2", id="88667071098147"},
+    {name="Music 3", id="140383430074415"},
+    {name="Music 4", id="112448027542021"},
+    {name="Music 5", id="137879308393608"},
+    {name="Music 6", id="78414661292761"},
+    {name="Music 7", id="77712236704085"},
+    {name="Music 8", id="106866829236727"},
+    {name="Music 9", id="109794531843693"},
+    {name="Music 10", id="79409780351863"},
+    {name="Music 11", id="113077324050977"},
+    {name="Music 12", id="128512104863934"},
+    {name="Music 13", id="113778917971610"},
+    {name="Music 14", id="118064225618413"},
+    {name="Music 15", id="100584804963794"},
+    {name="Music 16", id="123171793186294"},
+    {name="Music 17", id="70791355308103"},
+    {name="Music 18", id="131847084942844"},
+    {name="Music 19", id="136893418307185"},
+    {name="Music 20", id="128771129962214"},
+    {name="Music 21", id="135903820233276"},
+    {name="Music 22", id="137828639403630"},
+    {name="Music 23", id="90617634718635"},
+    {name="Music 24", id="84773737820526"},
+    {name="Music 25", id="1427189017"},
+    {name="Music 26", id="85056357341685"},
+    {name="Music 27", id="100755435179302"},
+    {name="Music 28", id="104026572705664"},
+    {name="Music 29", id="88667633095864"},
+    {name="Music 30", id="70535546082862"},
+    {name="Music 31", id="rbxassetid://101453332349961"},
+    {name="Music 32", id="rbxassetid://106160266114222"},
 }
 
 -------------------------------------------------
--- Abas estilo hub famoso
+-- Abas
 -------------------------------------------------
 local tabs = {
     {name="🎵 Músicas", callback=function()
         clearContent()
         local y=0
-        for _,id in ipairs(ids) do
+        for _,music in ipairs(musicList) do
             local btn = Instance.new("TextButton")
             btn.Size = UDim2.new(1,-10,0,30)
             btn.Position = UDim2.new(0,5,0,y)
             btn.BackgroundColor3 = Color3.fromRGB(70,70,100)
             btn.TextColor3 = Color3.fromRGB(255,255,255)
-            btn.Text = id
+            btn.Text = music.name.." - "..music.id
             btn.Font = Enum.Font.SourceSans
             btn.TextSize = 16
             btn.Parent = scroll
             btn.MouseButton1Click:Connect(function()
-                if setclipboard then setclipboard(id) end
+                if setclipboard then setclipboard(music.id) end
+                local sound = Instance.new("Sound", game.Players.LocalPlayer:WaitForChild("PlayerGui"))
+                sound.SoundId = tostring(music.id)
+                sound:Play()
             end)
             y=y+35
         end
         scroll.CanvasSize = UDim2.new(0,0,0,y)
     end},
+
+    {name="👥 Copiar Jogador", callback=function()
+        clearContent()
+        local y=0
+        for _,player in ipairs(game.Players:GetPlayers()) do
+            if player ~= game.Players.LocalPlayer then
+                local btn = Instance.new("TextButton")
+                btn.Size = UDim2.new(1,-10,0,30)
+                btn.Position = UDim2.new(0,5,0,y)
+                btn.BackgroundColor3 = Color3.fromRGB(70,100,120)
+                btn.TextColor3 = Color3.fromRGB(255,255,255)
+                btn.Text = player.Name
+                btn.Font = Enum.Font.SourceSansBold
+                btn.TextSize = 16
+                btn.Parent = scroll
+                btn.MouseButton1Click:Connect(function()
+                    if setclipboard then setclipboard(player.Name) end
+                end)
+                y=y+35
+            end
+        end
+        scroll.CanvasSize = UDim2.new(0,0,0,y)
+    end},
+
     {name="⚡ Infinity Yield", callback=function()
         clearContent()
         local runBtn = Instance.new("TextButton")
-        runBtn.Size = UDim2.new(1,-10,0,40)
+        runBtn.Size = UDim2        runBtn.Size = UDim2.new(1,-10,0,40)
         runBtn.Position = UDim2.new(0,5,0,5)
         runBtn.BackgroundColor3 = Color3.fromRGB(100,100,150)
         runBtn.TextColor3 = Color3.fromRGB(255,255,255)
         runBtn.Text = "Executar Infinity Yield"
+        runBtn.Font = Enum.Font.SourceSansBold
+        runBtn.TextSize = 18
         runBtn.Parent = scroll
         runBtn.MouseButton1Click:Connect(function()
             loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
         end)
     end},
+
     {name="🎶 AJ Music Hub", callback=function()
         clearContent()
         local runBtn = Instance.new("TextButton")
@@ -163,11 +209,14 @@ local tabs = {
         runBtn.BackgroundColor3 = Color3.fromRGB(100,100,150)
         runBtn.TextColor3 = Color3.fromRGB(255,255,255)
         runBtn.Text = "Executar AJ Music Hub"
+        runBtn.Font = Enum.Font.SourceSansBold
+        runBtn.TextSize = 18
         runBtn.Parent = scroll
         runBtn.MouseButton1Click:Connect(function()
             loadstring(game:HttpGet("https://pastebin.com/raw/zLspNekY"))()
         end)
     end},
+
     {name="💃 Gaze Emotes", callback=function()
         clearContent()
         local runBtn = Instance.new("TextButton")
@@ -176,12 +225,15 @@ local tabs = {
         runBtn.BackgroundColor3 = Color3.fromRGB(100,100,150)
         runBtn.TextColor3 = Color3.fromRGB(255,255,255)
         runBtn.Text = "Executar Gaze Emotes"
+        runBtn.Font = Enum.Font.SourceSansBold
+        runBtn.TextSize = 18
         runBtn.Parent = scroll
         runBtn.MouseButton1Click:Connect(function()
             loadstring(game:HttpGet("https://raw.githubusercontent.com/Gazer-Ha/Gaze-stuff/refs/heads/main/Gaze%20emote"))()
         end)
     end},
-       {name="📜 Meu Script", callback=function()
+
+    {name="📜 Meu Script", callback=function()
         clearContent()
         local runBtn = Instance.new("TextButton")
         runBtn.Size = UDim2.new(1,-10,0,40)
@@ -192,9 +244,86 @@ local tabs = {
         runBtn.Font = Enum.Font.SourceSansBold
         runBtn.TextSize = 18
         runBtn.Parent = scroll
-
         runBtn.MouseButton1Click:Connect(function()
             loadstring(game:HttpGet("https://raw.githubusercontent.com/mudinhosilva47-web/MeuScriptRoblox/main/meuscript.lua"))()
+        end)
+    end},
+
+    {name="🛡️ Anti-AFK", callback=function()
+        clearContent()
+        local runBtn = Instance.new("TextButton")
+        runBtn.Size = UDim2.new(1,-10,0,40)
+        runBtn.Position = UDim2.new(0,5,0,5)
+        runBtn.BackgroundColor3 = Color3.fromRGB(100,100,150)
+        runBtn.TextColor3 = Color3.fromRGB(255,255,255)
+        runBtn.Text = "Ativar Anti-AFK"
+        runBtn.Font = Enum.Font.SourceSansBold
+        runBtn.TextSize = 18
+        runBtn.Parent = scroll
+        runBtn.MouseButton1Click:Connect(function()
+            local VirtualUser = game:GetService("VirtualUser")
+            game:GetService("Players").LocalPlayer.Idled:Connect(function()
+                VirtualUser:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+                task.wait(1)
+                VirtualUser:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+            end)
+        end)
+    end},
+
+    {name="🚀 Speed Hack", callback=function()
+        clearContent()
+        local runBtn = Instance.new("TextButton")
+        runBtn.Size = UDim2.new(1,-10,0,40)
+        runBtn.Position = UDim2.new(0,5,0,5)
+        runBtn.BackgroundColor3 = Color3.fromRGB(100,100,150)
+        runBtn.TextColor3 = Color3.fromRGB(255,255,255)
+        runBtn.Text = "Ativar Speed Hack"
+        runBtn.Font = Enum.Font.SourceSansBold
+        runBtn.TextSize = 18
+        runBtn.Parent = scroll
+        runBtn.MouseButton1Click:Connect(function()
+            local player = game.Players.LocalPlayer
+            local humanoid = player.Character:FindFirstChildOfClass("Humanoid")
+            if humanoid then
+                humanoid.WalkSpeed = 50
+            end
+        end)
+    end},
+
+    {name="🌀 Fly", callback=function()
+        clearContent()
+        local runBtn = Instance.new("TextButton")
+        runBtn.Size = UDim2.new(1,-10,0,40)
+        runBtn.Position = UDim2.new(0,5,0,5)
+        runBtn.BackgroundColor3 = Color3.fromRGB(100,100,150)
+        runBtn.TextColor3 = Color3.fromRGB(255,255,255)
+        runBtn.Text = "Ativar Fly"
+        runBtn.Font = Enum.Font.SourceSansBold
+        runBtn.TextSize = 18
+        runBtn.Parent = scroll
+        runBtn.MouseButton1Click:Connect(function()
+            loadstring(game:HttpGet("https://pastebin.com/raw/7t3QdQjz"))()
+        end)
+    end},
+
+    {name="👑 God Mode", callback=function()
+        clearContent()
+        local runBtn = Instance.new("TextButton")
+        runBtn.Size = UDim2.new(1,-10,0,40)
+        runBtn.Position = UDim2.new(0,5,0,5)
+        runBtn.BackgroundColor3 = Color3.fromRGB(100,100,150)
+        runBtn.TextColor3 = Color3.fromRGB(255,255,255)
+        runBtn.Text = "Ativar God Mode"
+        runBtn.Font = Enum.Font.SourceSansBold
+        runBtn.TextSize = 18
+        runBtn.Parent = scroll
+        runBtn.MouseButton1Click:Connect(function()
+            local player = game.Players.LocalPlayer
+            local humanoid = player.Character:FindFirstChildOfClass("Humanoid")
+            if humanoid then
+                humanoid.Health = math.huge
+                humanoid.MaxHealth = math.huge
+            end
         end)
     end}
 }
@@ -203,7 +332,7 @@ local tabs = {
 for i,tab in ipairs(tabs) do
     local btn = Instance.new("TextButton")
     btn.Size = UDim2.new(1, 0, 0, 40)
-    btn.Position = UDim2.new(0, 0, 0, (i-1)*45) -- espaçamento melhorado
+    btn.Position = UDim2.new(0, 0, 0, (i-1)*45)
     btn.BackgroundColor3 = Color3.fromRGB(80, 80, 120)
     btn.TextColor3 = Color3.fromRGB(255, 255, 255)
     btn.Text = tab.name
@@ -211,7 +340,6 @@ for i,tab in ipairs(tabs) do
     btn.TextSize = 16
     btn.Parent = menu
 
-    -- Stroke rainbow nos botões
     local btnStroke = Instance.new("UIStroke")
     btnStroke.Thickness = 2
     btnStroke.Parent = btn
@@ -231,7 +359,7 @@ for i,tab in ipairs(tabs) do
 end
 
 -------------------------------------------------
--- Sistema de arrastar pelo título (PC + Mobile)
+-- Sistema de arrastar pelo título
 -------------------------------------------------
 local UserInputService = game:GetService("UserInputService")
 local dragging = false
@@ -259,18 +387,16 @@ local function updateDrag(input)
     end
 end
 
--- mover pelo título (mouse e toque)
 title.InputBegan:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
         startDrag(input)
     end
 end)
 
-title.InputEnded:Connect(function(input)
+title.InputEnded:Connect(functiontitle.InputEnded:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
         endDrag()
     end
 end)
 
 UserInputService.InputChanged:Connect(updateDrag)
-
