@@ -1,183 +1,197 @@
---====================================
--- SERVICES
---====================================
+--// SERVIÇOS
 local Players = game:GetService("Players")
 local UIS = game:GetService("UserInputService")
-local LocalPlayer = Players.LocalPlayer
+local StarterGui = game:GetService("StarterGui")
+local Player = Players.LocalPlayer
 
-local parentGui = gethui and gethui() or LocalPlayer:WaitForChild("PlayerGui")
-pcall(function() parentGui.KeylessHubPro:Destroy() end)
-
---====================================
--- GUI
---====================================
-local gui = Instance.new("ScreenGui", parentGui)
-gui.Name = "KeylessHubPro"
-gui.ResetOnSpawn = false
-
---====================================
--- MAIN FRAME
---====================================
-local frame = Instance.new("Frame", gui)
-frame.Size = UDim2.new(0, 300, 0, 360)
-frame.Position = UDim2.new(0.5, -150, 0.5, -180)
-frame.BackgroundColor3 = Color3.fromRGB(25,0,0)
-frame.BorderSizePixel = 0
-frame.Active = true
-frame.Selectable = true
-Instance.new("UICorner", frame).CornerRadius = UDim.new(0,8)
-
---====================================
--- TITLE BAR
---====================================
-local title = Instance.new("TextLabel", frame)
-title.Size = UDim2.new(1, -10, 0, 30)
-title.Position = UDim2.new(0, 5, 0, 0)
-title.Text = "🎧 Music ID Hub"
-title.Font = Enum.Font.SourceSansBold
-title.TextSize = 16
-title.TextColor3 = Color3.fromRGB(255,80,80)
-title.BackgroundTransparency = 1
-title.TextXAlignment = Enum.TextXAlignment.Left
-
---====================================
--- TABS
---====================================
-local tabs = Instance.new("Frame", frame)
-tabs.Size = UDim2.new(1, 0, 0, 30)
-tabs.Position = UDim2.new(0, 0, 0, 32)
-tabs.BackgroundTransparency = 1
-
-local function createTabButton(text, xPos)
-	local btn = Instance.new("TextButton", tabs)
-	btn.Size = UDim2.new(0.5, -5, 1, 0)
-	btn.Position = UDim2.new(xPos, 5, 0, 0)
-	btn.Text = text
-	btn.BackgroundColor3 = Color3.fromRGB(90,20,20)
-	btn.TextColor3 = Color3.new(1,1,1)
-	btn.Font = Enum.Font.SourceSansBold
-	btn.TextSize = 14
-	Instance.new("UICorner", btn)
-	return btn
-end
-
-local musicTabBtn = createTabButton("🎵 Music IDs", 0)
-local utilTabBtn  = createTabButton("🛠 Util", 0.5)
-
---====================================
--- CONTENT FRAMES
---====================================
-local function createContent()
-	local sf = Instance.new("ScrollingFrame", frame)
-	sf.Size = UDim2.new(1, -10, 1, -75)
-	sf.Position = UDim2.new(0, 5, 0, 65)
-	sf.ScrollBarThickness = 4
-	sf.BackgroundColor3 = Color3.fromRGB(40,0,0)
-	sf.AutomaticCanvasSize = Enum.AutomaticSize.Y
-	sf.CanvasSize = UDim2.new(0,0,0,0)
-	sf.Visible = false
-	Instance.new("UICorner", sf)
-	
-	local layout = Instance.new("UIListLayout", sf)
-	layout.Padding = UDim.new(0,6)
-	layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-	
-	return sf
-end
-
-local musicContent = createContent()
-local utilContent  = createContent()
-musicContent.Visible = true
-
---====================================
--- TAB SWITCH
---====================================
-musicTabBtn.MouseButton1Click:Connect(function()
-	musicContent.Visible = true
-	utilContent.Visible = false
-end)
-
-utilTabBtn.MouseButton1Click:Connect(function()
-	musicContent.Visible = false
-	utilContent.Visible = true
-end)
-
---====================================
--- BUTTON CREATOR
---====================================
-local function addButton(parent, text, callback)
-	local btn = Instance.new("TextButton", parent)
-	btn.Size = UDim2.new(1, -10, 0, 32)
-	btn.Text = text
-	btn.BackgroundColor3 = Color3.fromRGB(90,20,20)
-	btn.TextColor3 = Color3.new(1,1,1)
-	btn.Font = Enum.Font.SourceSans
-	btn.TextSize = 14
-	Instance.new("UICorner", btn)
-
-	btn.MouseButton1Click:Connect(function()
-		callback(btn)
+--// NOTIFY
+local function Notify(msg)
+	pcall(function()
+		StarterGui:SetCore("SendNotification", {
+			Title = "🎵 Keyless Hub Pro",
+			Text = msg,
+			Duration = 3
+		})
 	end)
 end
 
---====================================
--- MUSIC IDS
---====================================
-local musicIds = {
-"135738534706063","88667071098147","140383430074415",
-"112448027542021","137879308393608",
-"rbxassetid://101453332349961"
+--// BOOMBOX GLOBAL
+local function PlayBrookhavenBoombox(id)
+	local char = Player.Character
+	if not char then return false end
+
+	for _,tool in pairs(char:GetChildren()) do
+		if tool:IsA("Tool") then
+			for _,v in pairs(tool:GetDescendants()) do
+				if v:IsA("RemoteEvent") then
+					local ok = pcall(function()
+						v:FireServer(id)
+					end)
+					if ok then
+						return true
+					end
+				end
+			end
+		end
+	end
+	return false
+end
+
+--// GUI
+local Gui = Instance.new("ScreenGui", Player.PlayerGui)
+Gui.Name = "KeylessHubPro_Premium"
+
+--// MAIN
+local Main = Instance.new("Frame", Gui)
+Main.Size = UDim2.new(0, 560, 0, 380)
+Main.Position = UDim2.new(0.3, 0, 0.3, 0)
+Main.BackgroundColor3 = Color3.fromRGB(18,18,25)
+Main.Active = true
+Main.Draggable = true
+Instance.new("UICorner", Main).CornerRadius = UDim.new(0,14)
+
+--// BORDA PREMIUM
+local Stroke = Instance.new("UIStroke", Main)
+Stroke.Thickness = 2
+task.spawn(function()
+	while true do
+		for i=0,255 do
+			Stroke.Color = Color3.fromHSV(i/255,1,1)
+			task.wait(0.02)
+		end
+	end
+end)
+
+--// TOPO
+local Top = Instance.new("Frame", Main)
+Top.Size = UDim2.new(1,0,0,42)
+Top.BackgroundColor3 = Color3.fromRGB(24,24,35)
+
+local Title = Instance.new("TextLabel", Top)
+Title.Size = UDim2.new(1,0,1,0)
+Title.BackgroundTransparency = 1
+Title.Text = "💎 Keyless Hub Pro (Premium)"
+Title.Font = Enum.Font.GothamBold
+Title.TextSize = 18
+Title.TextColor3 = Color3.new(1,1,1)
+
+--// MENU
+local Menu = Instance.new("Frame", Main)
+Menu.Position = UDim2.new(0,0,0,42)
+Menu.Size = UDim2.new(0,150,1,-42)
+Menu.BackgroundColor3 = Color3.fromRGB(22,22,32)
+
+--// CONTENT
+local Content = Instance.new("Frame", Main)
+Content.Position = UDim2.new(0,150,0,42)
+Content.Size = UDim2.new(1,-150,1,-42)
+Content.BackgroundColor3 = Color3.fromRGB(32,32,45)
+
+--// SCROLL
+local Scroll = Instance.new("ScrollingFrame", Content)
+Scroll.Size = UDim2.new(1,-12,1,-12)
+Scroll.Position = UDim2.new(0,6,0,6)
+Scroll.CanvasSize = UDim2.new(0,0,0,0)
+Scroll.ScrollBarThickness = 6
+Scroll.BackgroundTransparency = 1
+
+local Layout = Instance.new("UIListLayout", Scroll)
+Layout.Padding = UDim.new(0,8)
+
+--// CLEAR
+local function Clear()
+	for _,v in pairs(Scroll:GetChildren()) do
+		if v:IsA("TextButton") then
+			v:Destroy()
+		end
+	end
+end
+
+--// BOTÃO PADRÃO
+local function CreateButton(text, callback)
+	local B = Instance.new("TextButton", Scroll)
+	B.Size = UDim2.new(1,0,0,38)
+	B.BackgroundColor3 = Color3.fromRGB(60,60,90)
+	B.Text = text
+	B.Font = Enum.Font.Gotham
+	B.TextSize = 14
+	B.TextColor3 = Color3.new(1,1,1)
+	Instance.new("UICorner", B).CornerRadius = UDim.new(0,10)
+	B.MouseButton1Click:Connect(callback)
+end
+
+--// IDS (SEUS)
+local MusicIDs = {
+"135738534706063","88667071098147","140383430074415","112448027542021",
+"137879308393608","78414661292761","77712236704085","106866829236727",
+"109794531843693","79409780351863","113077324050977","128512104863934",
+"113778917971610","118064225618413","100584804963794","123171793186294",
+"70791355308103","131847084942844","136893418307185","128771129962214",
+"135903820233276","137828639403630","90617634718635","84773737820526",
+"1427189017","85056357341685","100755435179302","104026572705664",
+"88667633095864","70535546082862","rbxassetid://101453332349961",
+"rbxassetid://106160266114222"
 }
 
-for i,id in ipairs(musicIds) do
-	addButton(musicContent, "📋 Copiar Music ID "..i, function(btn)
-		local finalId = tostring(id):find("rbxassetid://") and id or "rbxassetid://"..id
-		if setclipboard then setclipboard(finalId) end
+--// ABAS
+local Tabs = {
+	["🎵 Músicas"] = function()
+		Clear()
+		for _,id in ipairs(MusicIDs) do
+			CreateButton("🎵 "..id, function()
+				local ok = PlayBrookhavenBoombox(id)
+				if ok then
+					Notify("Música tocando no Boombox 🔊")
+				else
+					if setclipboard then setclipboard(id) end
+					Notify("ID copiado 📋 Cole no Boombox")
+				end
+			end)
+		end
+	end,
 
-		local old = btn.Text
-		btn.Text = "✅ Copiado!"
-		task.delay(1, function()
-			if btn then btn.Text = old end
+	["⚡ Infinity Yield"] = function()
+		Clear()
+		CreateButton("Executar Infinity Yield", function()
+			loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
 		end)
-	end)
+	end,
+
+	["🎶 AJ Music Hub"] = function()
+		Clear()
+		CreateButton("Executar AJ Music Hub", function()
+			loadstring(game:HttpGet("https://pastebin.com/raw/zLspNekY"))()
+		end)
+	end,
+
+	["💃 Gaze Emotes"] = function()
+		Clear()
+		CreateButton("Executar Gaze Emotes", function()
+			loadstring(game:HttpGet("https://raw.githubusercontent.com/Gazer-Ha/Gaze-stuff/main/Gaze%20emote"))()
+		end)
+	end,
+
+	["📜 Meu Script"] = function()
+		Clear()
+		CreateButton("Executar Meu Script", function()
+			loadstring(game:HttpGet("https://raw.githubusercontent.com/mudinhosilva47-web/MeuScriptRoblox/main/meuscript.lua"))()
+		end)
+	end
+}
+
+--// MENU BUTTONS
+local y = 12
+for name,func in pairs(Tabs) do
+	local Btn = Instance.new("TextButton", Menu)
+	Btn.Size = UDim2.new(1,-10,0,38)
+	Btn.Position = UDim2.new(0,5,0,y)
+	Btn.BackgroundColor3 = Color3.fromRGB(55,55,85)
+	Btn.Text = name
+	Btn.Font = Enum.Font.GothamBold
+	Btn.TextSize = 14
+	Btn.TextColor3 = Color3.new(1,1,1)
+	Instance.new("UICorner", Btn).CornerRadius = UDim.new(0,10)
+
+	Btn.MouseButton1Click:Connect(func)
+	y += 46
 end
-
---====================================
--- UTIL TAB
---====================================
-addButton(utilContent, "🧹 Limpar Clipboard", function()
-	if setclipboard then setclipboard("") end
-end)
-
---====================================
--- DRAG (FUNCIONANDO)
---====================================
-local dragging, dragStart, startPos
-
-frame.InputBegan:Connect(function(input)
-	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-		dragging = true
-		dragStart = input.Position
-		startPos = frame.Position
-	end
-end)
-
-frame.InputEnded:Connect(function(input)
-	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-		dragging = false
-	end
-end)
-
-UIS.InputChanged:Connect(function(input)
-	if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
-		local delta = input.Position - dragStart
-		frame.Position = UDim2.new(
-			startPos.X.Scale,
-			startPos.X.Offset + delta.X,
-			startPos.Y.Scale,
-			startPos.Y.Offset + delta.Y
-		)
-	end
-end)
-
-print("✅ Hub carregado sem bugs (abas + drag)")
