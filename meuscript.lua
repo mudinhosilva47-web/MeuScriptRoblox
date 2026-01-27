@@ -1,5 +1,5 @@
 --====================================
--- SERVICES / DELTA FIX
+-- SERVICES
 --====================================
 local Players = game:GetService("Players")
 local UIS = game:GetService("UserInputService")
@@ -16,34 +16,33 @@ gui.Name = "KeylessHubPro"
 gui.ResetOnSpawn = false
 
 --====================================
--- MAIN FRAME (COMPACT + RED)
+-- MAIN FRAME
 --====================================
 local frame = Instance.new("Frame", gui)
-frame.Size = UDim2.new(0, 290, 0, 340)
-frame.Position = UDim2.new(0.5, -145, 0.5, -170)
-frame.BackgroundColor3 = Color3.fromRGB(25, 0, 0)
+frame.Size = UDim2.new(0, 300, 0, 360)
+frame.Position = UDim2.new(0.5, -150, 0.5, -180)
+frame.BackgroundColor3 = Color3.fromRGB(25,0,0)
 frame.BorderSizePixel = 0
 frame.Active = true
-Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 8)
+Instance.new("UICorner", frame).CornerRadius = UDim.new(0,8)
 
 --====================================
--- TITLE BAR (DRAG)
+-- TITLE BAR
 --====================================
 local title = Instance.new("TextLabel", frame)
-title.Size = UDim2.new(1, -35, 0, 30)
-title.Position = UDim2.new(0, 5, 0, 0)
-title.Text = "Script Hub"
+title.Size = UDim2.new(1, -40, 0, 30)
+title.Position = UDim2.new(0, 8, 0, 0)
+title.Text = "🎧 Music ID Hub"
 title.Font = Enum.Font.SourceSansBold
 title.TextSize = 16
 title.TextColor3 = Color3.fromRGB(255,80,80)
 title.BackgroundTransparency = 1
-title.TextXAlignment = Enum.TextXAlignment.Left
+title.TextXAlignment = Left
 
 local close = Instance.new("TextButton", frame)
 close.Size = UDim2.new(0, 25, 0, 25)
-close.Position = UDim2.new(1, -28, 0, 3)
+close.Position = UDim2.new(1, -30, 0, 3)
 close.Text = "X"
-close.TextSize = 14
 close.BackgroundColor3 = Color3.fromRGB(180,40,40)
 close.TextColor3 = Color3.new(1,1,1)
 Instance.new("UICorner", close)
@@ -60,16 +59,11 @@ content.Size = UDim2.new(1, -10, 1, -40)
 content.Position = UDim2.new(0, 5, 0, 35)
 content.CanvasSize = UDim2.new(0,0,0,0)
 content.ScrollBarThickness = 4
-content.BackgroundColor3 = Color3.fromRGB(40, 0, 0)
+content.BackgroundColor3 = Color3.fromRGB(40,0,0)
 Instance.new("UICorner", content).CornerRadius = UDim.new(0,6)
 
 --====================================
--- SOUND
---====================================
-local sound = Instance.new("Sound", parentGui)
-
---====================================
--- MUSIC IDS (SEUS)
+-- MUSIC IDS
 --====================================
 local musicIds = {
 "135738534706063","88667071098147","140383430074415","112448027542021",
@@ -77,11 +71,14 @@ local musicIds = {
 "109794531843693","79409780351863","113077324050977","128512104863934",
 "113778917971610","118064225618413","100584804963794","123171793186294",
 "70791355308103","131847084942844","136893418307185","128771129962214",
-"135903820233276","137828639403630","90617634718635","84773737820526",
-"1427189017","85056357341685","100755435179302","104026572705664",
-"88667633095864","70535546082862",
 "rbxassetid://101453332349961","rbxassetid://106160266114222"
 }
+
+--====================================
+-- STORAGE
+--====================================
+local savedIds = {}
+local lastCopied = nil
 
 --====================================
 -- BUTTON CREATOR
@@ -94,58 +91,63 @@ local function addButton(text, callback)
 	btn.Text = text
 	btn.Font = Enum.Font.SourceSans
 	btn.TextSize = 14
-	btn.BackgroundColor3 = Color3.fromRGB(90, 20, 20)
+	btn.BackgroundColor3 = Color3.fromRGB(90,20,20)
 	btn.TextColor3 = Color3.new(1,1,1)
 	Instance.new("UICorner", btn).CornerRadius = UDim.new(0,4)
 
-	btn.MouseButton1Click:Connect(callback)
+	btn.MouseButton1Click:Connect(function()
+		callback(btn)
+	end)
 
 	y += 36
 	content.CanvasSize = UDim2.new(0,0,0,y)
 end
 
 --====================================
--- MUSIC BUTTONS
+-- MUSIC BUTTONS (COPIAR + SALVAR)
 --====================================
 for i,id in ipairs(musicIds) do
-	addButton("🎵 Music "..i, function()
-		sound:Stop()
-		sound.SoundId = tostring(id):find("rbxassetid://") and id or "rbxassetid://"..id
-		sound:Play()
-		if setclipboard then setclipboard(id) end
+	addButton("📋 Copiar Music ID "..i, function(btn)
+		local finalId = tostring(id):find("rbxassetid://") and id or "rbxassetid://"..id
+		
+		if setclipboard then
+			setclipboard(finalId)
+		end
+		
+		lastCopied = finalId
+		table.insert(savedIds, finalId)
+
+		local old = btn.Text
+		btn.Text = "✅ Copiado!"
+		task.delay(1, function()
+			if btn then btn.Text = old end
+		end)
 	end)
 end
 
 --====================================
--- LOADS
+-- UTIL BUTTONS
 --====================================
-addButton("⚡ Infinity Yield", function()
-	loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
+addButton("📥 Colar último ID", function()
+	if lastCopied and setclipboard then
+		setclipboard(lastCopied)
+	end
 end)
 
-addButton("🎶 AJ Music Hub", function()
-	loadstring(game:HttpGet("https://pastebin.com/raw/zLspNekY"))()
+addButton("💾 Mostrar IDs salvos", function()
+	print("==== IDs SALVOS ====")
+	for i,v in ipairs(savedIds) do
+		print(i, v)
+	end
 end)
 
-addButton("💃 Gaze Emotes", function()
-	loadstring(game:HttpGet("https://raw.githubusercontent.com/Gazer-Ha/Gaze-stuff/refs/heads/main/Gaze%20emote"))()
-end)
-
-addButton("🌀 Fly", function()
-	loadstring(game:HttpGet("https://pastebin.com/raw/7t3QdQjz"))()
-end)
-
-addButton("🛡️ Anti-AFK", function()
-	local vu = game:GetService("VirtualUser")
-	LocalPlayer.Idled:Connect(function()
-		vu:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
-		task.wait(1)
-		vu:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
-	end)
+addButton("🧹 Limpar IDs salvos", function()
+	table.clear(savedIds)
+	print("IDs salvos limpos")
 end)
 
 --====================================
--- DRAG (MOBILE)
+-- DRAG (MOBILE + PC)
 --====================================
 local dragging, dragStart, startPos
 
@@ -175,4 +177,4 @@ UIS.InputChanged:Connect(function(input)
 	end
 end)
 
-print("✅ Hub vermelho compacto carregado (mobile)")
+print("✅ Music ID Hub carregado (copiar + salvar)")
