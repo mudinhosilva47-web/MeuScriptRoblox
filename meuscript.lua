@@ -1,4 +1,4 @@
--- Gui principal
+-- Gui principa
 local gui = Instance.new("ScreenGui")
 gui.Name = "HubVortexLordFmlyAplixOlfSeven"
 gui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
