@@ -1,33 +1,52 @@
--- LocalScript de teste para alterar Nome de RP e Biografia
+-- Nome e biografia desejados
+local novoNome = "FmlyAplixOlfSeven"
+local novaBio = "Welcome.!"
+local corNome = Color3.fromRGB(255, 0, 0) -- vermelho
+local corBio = Color3.fromRGB(255, 255, 255) -- branco
 
-local player = game.Players.LocalPlayer
-local playerGui = player:WaitForChild("PlayerGui")
-
--- Espera pela GUI
-local nameGui = playerGui:FindFirstChild("NameGUI") -- altere se o nome da GUI for diferente
-
-if nameGui then
-    -- Procura os TextLabels dentro da GUI
-    local rpNameLabel = nameGui:FindFirstChild("RPName") or nameGui:FindFirstChildWhichIsA("TextLabel")
-    local bioLabel = nameGui:FindFirstChild("RPBio") or nameGui:FindFirstChildWhichIsA("TextLabel")
-
-    -- Muda o Nome de RP
-    if rpNameLabel then
-        rpNameLabel.Text = "FmlyAplixOlfSeven"
-        rpNameLabel.TextColor3 = Color3.fromRGB(255,0,0) -- vermelho
-        print("Nome de RP alterado com sucesso!")
-    else
-        print("Não encontrei o TextLabel do Nome de RP.")
+-- Função para atualizar NameGUI de jogadores
+local function atualizarNomeRP()
+    -- Percorrer todos os jogadores
+    for _, player in pairs(game.Players:GetPlayers()) do
+        -- Ignorar se for você mesmo (opcional)
+        if player ~= game.Players.LocalPlayer then
+            local character = player.Character
+            if character then
+                -- Procurar por BillboardGui na cabeça
+                local head = character:FindFirstChild("Head")
+                if head then
+                    for _, gui in pairs(head:GetChildren()) do
+                        if gui:IsA("BillboardGui") then
+                            for _, txtLabel in pairs(gui:GetChildren()) do
+                                if txtLabel:IsA("TextLabel") then
+                                    local textLower = txtLabel.Text:lower()
+                                    -- Nome RP
+                                    if textLower:find("rp") or textLower:find("name") then
+                                        txtLabel.Text = novoNome
+                                        txtLabel.TextColor3 = corNome
+                                    end
+                                    -- Biografia (às vezes chamada de "bio")
+                                    if textLower:find("bio") then
+                                        txtLabel.Text = novaBio
+                                        txtLabel.TextColor3 = corBio
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
     end
-
-    -- Muda a Biografia
-    if bioLabel then
-        bioLabel.Text = "Welcome.!"
-        bioLabel.TextColor3 = Color3.fromRGB(255,255,255)
-        print("Biografia alterada com sucesso!")
-    else
-        print("Não encontrei o TextLabel da Biografia.")
-    end
-else
-    print("Não encontrei a GUI NameGUI!")
 end
+
+-- Atualiza imediatamente
+atualizarNomeRP()
+
+-- Atualiza continuamente a cada 2 segundos (para novos jogadores ou mudanças)
+task.spawn(function()
+    while true do
+        atualizarNomeRP()
+        task.wait(2)
+    end
+end)
