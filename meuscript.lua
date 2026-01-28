@@ -1,4 +1,4 @@
--- Gui principa
+-- Gui principal
 local gui = Instance.new("ScreenGui")
 gui.Name = "HubVortexLordFmlyAplixOlfSeven"
 gui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
@@ -278,4 +278,3 @@ title.InputEnded:Connect(function(input)
 end)
 
 UserInputService.InputChanged:Connect(updateDrag)
-
