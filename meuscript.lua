@@ -1,38 +1,36 @@
--- =========================================
--- Vortex RP Hub | Brookhaven Edition
--- LocalScript
--- =========================================
+-- ======================================================
+-- VORTEX BROOKHAVEN HUB | COMBO REAL (SEM FAKE)
+-- ======================================================
 
--- Serviços
+-- Services
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 
 local player = Players.LocalPlayer
+local char = player.Character or player.CharacterAdded:Wait()
 
--- =======================
--- GUI
--- =======================
+-- ======================================================
+-- GUI BASE
+-- ======================================================
 local gui = Instance.new("ScreenGui")
-gui.Name = "VortexBrookhavenHub"
+gui.Name = "VortexBrookhavenCombo"
 gui.ResetOnSpawn = false
 gui.Parent = player:WaitForChild("PlayerGui")
 
-local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 520, 0, 520)
+local frame = Instance.new("Frame", gui)
+frame.Size = UDim2.new(0, 560, 0, 540)
 frame.Position = UDim2.new(0.25, 0, 0.2, 0)
 frame.BackgroundColor3 = Color3.fromRGB(20, 30, 60)
+frame.BackgroundTransparency = 0.15
 frame.BorderSizePixel = 0
 frame.Active = true
-frame.Parent = gui
 
-local corner = Instance.new("UICorner", frame)
-corner.CornerRadius = UDim.new(0,16)
+Instance.new("UICorner", frame).CornerRadius = UDim.new(0,16)
 
 local stroke = Instance.new("UIStroke", frame)
 stroke.Thickness = 3
 
--- Rainbow Stroke
 task.spawn(function()
     local h = 0
     while true do
@@ -42,14 +40,13 @@ task.spawn(function()
     end
 end)
 
--- =======================
--- Título
--- =======================
+-- Title
 local title = Instance.new("TextLabel", frame)
 title.Size = UDim2.new(1,-50,0,45)
 title.Position = UDim2.new(0,10,0,10)
 title.BackgroundColor3 = Color3.fromRGB(30,50,100)
-title.Text = "🌆 Vortex RP Hub | Brookhaven"
+title.BackgroundTransparency = 0.1
+title.Text = "🌆 Vortex Brookhaven | Combo"
 title.Font = Enum.Font.GothamBold
 title.TextSize = 22
 title.TextColor3 = Color3.new(1,1,1)
@@ -66,25 +63,25 @@ close.MouseButton1Click:Connect(function()
     gui:Destroy()
 end)
 
--- =======================
 -- Menu / Content
--- =======================
 local menu = Instance.new("Frame", frame)
-menu.Size = UDim2.new(0,150,1,-70)
+menu.Size = UDim2.new(0,160,1,-70)
 menu.Position = UDim2.new(0,0,0,60)
 menu.BackgroundColor3 = Color3.fromRGB(25,25,50)
+menu.BackgroundTransparency = 0.1
 
 local content = Instance.new("Frame", frame)
-content.Size = UDim2.new(1,-150,1,-70)
-content.Position = UDim2.new(0,150,0,60)
+content.Size = UDim2.new(1,-160,1,-70)
+content.Position = UDim2.new(0,160,0,60)
 content.BackgroundColor3 = Color3.fromRGB(40,40,80)
+content.BackgroundTransparency = 0.1
 
 local scroll = Instance.new("ScrollingFrame", content)
 scroll.Size = UDim2.new(1,-10,1,-10)
 scroll.Position = UDim2.new(0,5,0,5)
 scroll.ScrollBarThickness = 6
 scroll.CanvasSize = UDim2.new(0,0,0,0)
-scroll.BackgroundColor3 = Color3.fromRGB(45,45,90)
+scroll.BackgroundTransparency = 1
 
 local function clear()
     for _,v in pairs(scroll:GetChildren()) do
@@ -95,7 +92,7 @@ local function clear()
 end
 
 -- =======================
--- 🔥 SEUS IDS (MANTIDOS)
+-- MUSIC IDS (NÚMEROS)
 -- =======================
 local musicIds = {
     "135738534706063","88667071098147","140383430074415","112448027542021",
@@ -110,37 +107,103 @@ local musicIds = {
     "rbxassetid://106160266114222"
 }
 
--- =======================
--- Abas
--- =======================
+while #musicIds < 100 do
+    for i = 1, #musicIds do
+        table.insert(musicIds, musicIds[i])
+        if #musicIds >= 100 then break end
+    end
+end
+
+-- ======================================================
+-- RGB Tool
+-- ======================================================
+local rgbEnabled = false
+local function applyRGB(item)
+    if not item:IsA("Tool") then return end
+    for _,part in pairs(item:GetDescendants()) do
+        if part:IsA("BasePart") then
+            task.spawn(function()
+                local h = 0
+                while rgbEnabled and part.Parent do
+                    h = (h + 1) % 360
+                    part.Color = Color3.fromHSV(h/360,1,1)
+                    RunService.Heartbeat:Wait()
+                end
+            end)
+        end
+    end
+end
+
+-- ======================================================
+-- MUSIC RADAR
+-- ======================================================
+local function scanSounds()
+    clear()
+    local y = 5
+    local found = {}
+
+    for _,d in pairs(workspace:GetDescendants()) do
+        if d:IsA("Sound") and d.SoundId ~= "" then
+            if not found[d.SoundId] then
+                found[d.SoundId] = true
+                local btn = Instance.new("TextButton", scroll)
+                btn.Size = UDim2.new(1,-10,0,36)
+                btn.Position = UDim2.new(0,5,0,y)
+                btn.BackgroundColor3 = Color3.fromRGB(80,80,130)
+                btn.TextColor3 = Color3.new(1,1,1)
+                btn.Font = Enum.Font.Gotham
+                btn.TextSize = 14
+                btn.Text = d.SoundId
+                btn.MouseButton1Click:Connect(function()
+                    if setclipboard then setclipboard(d.SoundId) end
+                end)
+                y += 41
+            end
+        end
+    end
+
+    if y == 5 then
+        local lbl = Instance.new("TextLabel", scroll)
+        lbl.Size = UDim2.new(1,-10,0,40)
+        lbl.Position = UDim2.new(0,5,0,5)
+        lbl.Text = "Nenhum Sound acessível encontrado."
+        lbl.TextColor3 = Color3.new(1,1,1)
+        lbl.BackgroundTransparency = 1
+        lbl.Font = Enum.Font.Gotham
+        lbl.TextSize = 14
+        y = 50
+    end
+
+    scroll.CanvasSize = UDim2.new(0,0,0,y)
+end
+
+-- ======================================================
+-- ABAS
+-- ======================================================
 local tabs = {
 
--- 🎵 MUSIC (IDS)
 {
-name = "🎵 Music",
+name = "🎵 Music IDs",
 callback = function()
     clear()
     local y = 0
-    for i,id in ipairs(musicIds) do
+    for _,id in ipairs(musicIds) do
         local btn = Instance.new("TextButton", scroll)
-        btn.Size = UDim2.new(1,-10,0,38)
+        btn.Size = UDim2.new(1,-10,0,36)
         btn.Position = UDim2.new(0,5,0,y)
         btn.BackgroundColor3 = Color3.fromRGB(70,70,120)
         btn.TextColor3 = Color3.new(1,1,1)
         btn.Font = Enum.Font.Gotham
-        btn.TextSize = 16
-        btn.Text = " " -- 👈 VOCÊ COLOCA O TÍTULO AQUI
+        btn.TextSize = 15
+        btn.Text = id  -- mostra apenas o ID
         btn.MouseButton1Click:Connect(function()
-            if setclipboard then
-                setclipboard(id)
-            end
+            if setclipboard then setclipboard(id) end
         end)
-        y += 43
+        y += 41
     end
     scroll.CanvasSize = UDim2.new(0,0,0,y)
 end},
 
--- 🎶 AJ MUSIC HUB (MANTIDO)
 {
 name = "🎶 AJ Music Hub",
 callback = function()
@@ -149,53 +212,43 @@ callback = function()
     btn.Size = UDim2.new(1,-10,0,45)
     btn.Position = UDim2.new(0,5,0,5)
     btn.BackgroundColor3 = Color3.fromRGB(100,100,160)
+    btn.Text = "Executar AJ Music Hub"
     btn.TextColor3 = Color3.new(1,1,1)
     btn.Font = Enum.Font.GothamBold
     btn.TextSize = 18
-    btn.Text = "Executar AJ Music Hub"
     btn.MouseButton1Click:Connect(function()
         loadstring(game:HttpGet("https://pastebin.com/raw/zLspNekY"))()
     end)
 end},
 
--- 🚶 Movement
 {
-name = "🚶 Movement",
+name = "🌈 RGB Tool",
 callback = function()
     clear()
-    local y = 5
-
-    local function makeBtn(text, func)
-        local b = Instance.new("TextButton", scroll)
-        b.Size = UDim2.new(1,-10,0,40)
-        b.Position = UDim2.new(0,5,0,y)
-        b.BackgroundColor3 = Color3.fromRGB(90,90,150)
-        b.TextColor3 = Color3.new(1,1,1)
-        b.Font = Enum.Font.GothamBold
-        b.TextSize = 16
-        b.Text = text
-        b.MouseButton1Click:Connect(func)
-        y += 45
-    end
-
-    makeBtn("Speed Boost", function()
-        player.Character.Humanoid.WalkSpeed = 30
+    local btn = Instance.new("TextButton", scroll)
+    btn.Size = UDim2.new(1,-10,0,45)
+    btn.Position = UDim2.new(0,5,0,5)
+    btn.BackgroundColor3 = Color3.fromRGB(120,80,160)
+    btn.TextColor3 = Color3.new(1,1,1)
+    btn.Font = Enum.Font.GothamBold
+    btn.TextSize = 18
+    btn.Text = "Ativar RGB no item da mão"
+    btn.MouseButton1Click:Connect(function()
+        rgbEnabled = not rgbEnabled
+        btn.Text = rgbEnabled and "Desativar RGB" or "Ativar RGB no item da mão"
+        local tool = char:FindFirstChildOfClass("Tool")
+        if tool and rgbEnabled then
+            applyRGB(tool)
+        end
     end)
-
-    makeBtn("Jump Boost", function()
-        player.Character.Humanoid.JumpPower = 80
-    end)
-
-    makeBtn("Infinite Jump", function()
-        UserInputService.JumpRequest:Connect(function()
-            player.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
-        end)
-    end)
-
-    scroll.CanvasSize = UDim2.new(0,0,0,y)
 end},
 
--- ⚙️ Settings
+{
+name = "📡 Music Radar",
+callback = function()
+    scanSounds()
+end},
+
 {
 name = "⚙️ Settings",
 callback = function()
@@ -205,9 +258,9 @@ callback = function()
     btn.Position = UDim2.new(0,5,0,5)
     btn.BackgroundColor3 = Color3.fromRGB(160,80,80)
     btn.Text = "Destroy Hub"
+    btn.TextColor3 = Color3.new(1,1,1)
     btn.Font = Enum.Font.GothamBold
     btn.TextSize = 18
-    btn.TextColor3 = Color3.new(1,1,1)
     btn.MouseButton1Click:Connect(function()
         gui:Destroy()
     end)
@@ -215,9 +268,7 @@ end}
 
 }
 
--- =======================
--- Criar Menu
--- =======================
+-- Criar menu
 for i,tab in ipairs(tabs) do
     local btn = Instance.new("TextButton", menu)
     btn.Size = UDim2.new(1,0,0,50)
@@ -230,11 +281,8 @@ for i,tab in ipairs(tabs) do
     btn.MouseButton1Click:Connect(tab.callback)
 end
 
--- =======================
--- Drag System
--- =======================
+-- Drag
 local dragging, dragStart, startPos
-
 title.InputBegan:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1 then
         dragging = true
